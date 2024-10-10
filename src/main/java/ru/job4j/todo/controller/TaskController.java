@@ -10,6 +10,9 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 
 @AllArgsConstructor
@@ -27,6 +30,33 @@ public class TaskController {
     public String create(@ModelAttribute Task task) {
         taskService.save(task);
         return "redirect:/";
+    }
+
+    @GetMapping("/done")
+    public String getDoneTasks(Model model) {
+        var result = new ArrayList<>();
+        var allTasks = taskService.findAll();
+        for (Task task : allTasks) {
+            if (task.isDone()) {
+                result.add(task);
+            }
+        }
+        model.addAttribute("tasks", result);
+        return "tasks/list";
+    }
+
+    @GetMapping("/new")
+    public String getNewTasks(Model model) {
+        var now = Timestamp.valueOf(LocalDateTime.now()).getTime();
+        var result = new ArrayList<>();
+        var allTasks = taskService.findAll();
+        for (Task task : allTasks) {
+            if (now - task.getCreated().getTime() <= 86400000) {
+                result.add(task);
+            }
+        }
+        model.addAttribute("tasks", result);
+        return "tasks/list";
     }
 
 
