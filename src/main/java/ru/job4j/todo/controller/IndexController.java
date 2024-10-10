@@ -16,7 +16,6 @@ public class IndexController {
     @GetMapping({"/", "/index"})
     public String getAll(Model model) {
         model.addAttribute("tasks", taskService.findAll());
-        System.out.println("===========================" + taskService.findAll());
         return "tasks/list";
     }
 

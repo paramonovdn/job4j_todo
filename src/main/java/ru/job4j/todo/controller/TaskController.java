@@ -5,7 +5,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.job4j.todo.model.Task;
 import ru.job4j.todo.service.TaskService;
+
+import javax.servlet.http.HttpSession;
 
 
 @AllArgsConstructor
@@ -17,6 +21,12 @@ public class TaskController {
     @GetMapping("/create")
     public String getCreationPage() {
         return "tasks/create";
+    }
+
+    @PostMapping("/create")
+    public String create(@ModelAttribute Task task) {
+        taskService.save(task);
+        return "redirect:/";
     }
 
 

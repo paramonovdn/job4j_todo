@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -20,7 +21,7 @@ public class Task {
     private int id;
     private String title;
     private String description;
-    private Timestamp created;
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
     private boolean done;
 
 }
