@@ -81,4 +81,19 @@ public class TaskController {
         model.addAttribute("task", doneTask);
         return "tasks/one";
     }
+
+    @GetMapping("/update/{id}")
+    public String getUpdatePage(Model model, @PathVariable int id) {
+        var task = taskService.findById(id).get();
+        model.addAttribute("task", task);
+        return "tasks/update";
+    }
+
+    @PostMapping("/update")
+    public String update(@ModelAttribute Task task, Model model) {
+        taskService.update(task);
+        var updateTask = taskService.findById(task.getId()).get();
+        model.addAttribute("task", updateTask);
+        return "/tasks/one";
+    }
 }
