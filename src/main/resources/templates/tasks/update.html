@@ -17,8 +17,8 @@
         <form class="mt-3" th:action="@{/tasks/update}" method="post" th:object="${task}" enctype="multipart/form-data">
             <input type="hidden" name="id" th:field="${task.id}">
             <div class="mb-3">
-                <label for="title" class="form-label"><b>Задача</b></label>
-                <input type="text" class="form-control" id="title" name="title" th:field="*{title}" placeholder="Имя задачи">
+                <label for="title" class="form-label"><b>Задание</b></label>
+                <input type="text" class="form-control" id="title" name="title" th:field="*{title}" placeholder="Заголовок задания">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label"><b>Описание</b></label>
