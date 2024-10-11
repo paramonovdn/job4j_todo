@@ -1,9 +1,0 @@
-ru\job4j\todo\model\Task.class
-ru\job4j\todo\Main.class
-ru\job4j\todo\controller\IndexController.class
-ru\job4j\todo\controller\TaskController.class
-ru\job4j\todo\service\TaskService.class
-ru\job4j\todo\configuration\DatasourceConfiguration.class
-ru\job4j\todo\repository\Store.class
-ru\job4j\todo\service\ServiceToDo.class
-ru\job4j\todo\repository\TaskStore.class
