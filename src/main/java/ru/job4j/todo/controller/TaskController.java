@@ -59,30 +59,26 @@ public class TaskController {
         return "tasks/list";
     }
 
-
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
         var taskOptional = taskService.findById(id);
-        if (taskOptional.isEmpty()) {
-            model.addAttribute("message", "Задача с указанным id не найдена.");
-            return "errors/404";
-        }
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
 
-   /* @GetMapping("/update")
-    public String update(@ModelAttribute Task task, Model model) {
-        try {
-            var isUpdated = candidateService.update(candidate, new FileDto(file.getOriginalFilename(), file.getBytes()));
-            if (!isUpdated) {
-                model.addAttribute("message", "Резюме с указанным идентификатором не найдено");
-                return "errors/404";
-            }
-            return "redirect:/candidates";
-        } catch (Exception exception) {
-            model.addAttribute("message", exception.getMessage());
-            return "errors/404";
-        }
-    }*/
+    @GetMapping("/delete/{id}")
+    public String delete(Model model, @PathVariable int id) {
+        taskService.deleteById(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/donebutton/{id}")
+    public String getIsDone(Model model, @PathVariable int id) {
+        var task = taskService.findById(id).get();
+        task.setDone(true);
+        taskService.update(task);
+        var doneTask = taskService.findById(id).get();
+        model.addAttribute("task", doneTask);
+        return "tasks/one";
+    }
 }
