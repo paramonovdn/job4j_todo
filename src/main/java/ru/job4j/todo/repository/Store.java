@@ -15,4 +15,9 @@ public interface Store {
     Optional<Task> findById(int id);
 
     List<Task> findAll();
+
+    List<Task> findAllDone();
+
+    List<Task> findNewTasks();
+    boolean setDoneTrue(int id);
 }

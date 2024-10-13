@@ -34,27 +34,14 @@ public class TaskController {
 
     @GetMapping("/done")
     public String getDoneTasks(Model model) {
-        var result = new ArrayList<>();
-        var allTasks = taskService.findAll();
-        for (Task task : allTasks) {
-            if (task.isDone()) {
-                result.add(task);
-            }
-        }
+        var result = taskService.findAllDone();
         model.addAttribute("tasks", result);
         return "tasks/list";
     }
 
     @GetMapping("/new")
     public String getNewTasks(Model model) {
-        var now = Timestamp.valueOf(LocalDateTime.now()).getTime();
-        var result = new ArrayList<>();
-        var allTasks = taskService.findAll();
-        for (Task task : allTasks) {
-            if (now - task.getCreated().getTime() <= 86400000) {
-                result.add(task);
-            }
-        }
+        var result = taskService.findNewTasks();
         model.addAttribute("tasks", result);
         return "tasks/list";
     }
@@ -62,21 +49,31 @@ public class TaskController {
     @GetMapping("/{id}")
     public String getById(Model model, @PathVariable int id) {
         var taskOptional = taskService.findById(id);
+        if (taskOptional.isEmpty()) {
+            model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
+            return "errors/404";
+        }
         model.addAttribute("task", taskOptional.get());
         return "tasks/one";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(Model model, @PathVariable int id) {
-        taskService.deleteById(id);
+        var isDeleted = taskService.deleteById(id);
+        if (!isDeleted) {
+            model.addAttribute("message", "Не удалось удалить задание с указанным идентификатором!");
+            return "errors/404";
+        }
         return "redirect:/";
     }
 
     @GetMapping("/donebutton/{id}")
     public String getIsDone(Model model, @PathVariable int id) {
-        var task = taskService.findById(id).get();
-        task.setDone(true);
-        taskService.update(task);
+        var isDone = taskService.setDoneTrue(id);
+        if (!isDone) {
+            model.addAttribute("message", "Не удалось изменить статус задания на \"Выполнено\"!");
+            return "errors/404";
+        }
         var doneTask = taskService.findById(id).get();
         model.addAttribute("task", doneTask);
         return "tasks/one";

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,16 +29,7 @@ public class TaskStore implements Store {
         try {
             session.beginTransaction();
             session.save(task);
-            var newId = session.createQuery("from Task as task where task.title = :taskTitle AND"
-                            + " task.description = :taskDescription AND "
-                            + "task.created = :taskCreated AND task.done = :taskDone", Task.class)
-                    .setParameter("taskTitle", task.getTitle())
-                    .setParameter("taskDescription", task.getDescription())
-                    .setParameter("taskCreated", task.getCreated())
-                    .setParameter("taskDone", task.isDone())
-                    .uniqueResult().getId();
             session.getTransaction().commit();
-            task.setId(newId);
             result = Optional.ofNullable(task);
         } catch (Exception e) {
             session.getTransaction().rollback();
@@ -73,12 +66,10 @@ public class TaskStore implements Store {
         boolean result = false;
         try {
             session.beginTransaction();
-            var query = session.createQuery("UPDATE Task SET title = :tTitle, description = :tDescription, "
-                            + "created = :tCreated, done = :tDone WHERE id = :tId")
+            var query = session.createQuery("UPDATE Task SET title = :tTitle, description = :tDescription"
+                            + " WHERE id = :tId")
                     .setParameter("tTitle", task.getTitle())
                     .setParameter("tDescription", task.getDescription())
-                    .setParameter("tCreated", task.getCreated())
-                    .setParameter("tDone", task.isDone())
                     .setParameter("tId", task.getId());
             var affectedRows = query.executeUpdate();
             result = affectedRows > 0;
@@ -119,6 +110,63 @@ public class TaskStore implements Store {
         try {
             session.beginTransaction();
             result = session.createQuery("from Task", Task.class).list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    public List<Task> findAllDone() {
+        var session = sf.openSession();
+        List<Task> result = new ArrayList<>();
+        try {
+            session.beginTransaction();
+            result = session.createQuery("from Task as task WHERE task.done = true", Task.class).list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Task> findNewTasks() {
+        var session = sf.openSession();
+        List<Task> result = new ArrayList<>();
+        var today = Timestamp.valueOf(LocalDateTime.now()).toString().substring(0,11);
+        try {
+            session.beginTransaction();
+            result = session.createQuery("from Task WHERE created LIKE :searchkey", Task.class)
+                    .setParameter("searchKey", "%" + today + "%")
+                    .list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public boolean setDoneTrue(int id) {
+        var session = sf.openSession();
+        boolean result = false;
+        try {
+            session.beginTransaction();
+            var query = session.createQuery("UPDATE Task SET done = :tDone WHERE id = :tId")
+                    .setParameter("tDone", true)
+                    .setParameter("tId", id);
+            var affectedRows = query.executeUpdate();
+            result = affectedRows > 0;
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
