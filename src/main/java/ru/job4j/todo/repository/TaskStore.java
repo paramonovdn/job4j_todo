@@ -139,14 +139,18 @@ public class TaskStore implements Store {
     @Override
     public List<Task> findNewTasks() {
         var session = sf.openSession();
+        List<Task> allTasks = new ArrayList<>();
         List<Task> result = new ArrayList<>();
-        var today = Timestamp.valueOf(LocalDateTime.now()).toString().substring(0,11);
+        var today = Timestamp.valueOf(LocalDateTime.now()).toString().substring(0, 10);
         try {
             session.beginTransaction();
-            result = session.createQuery("from Task WHERE created LIKE :searchkey", Task.class)
-                    .setParameter("searchKey", "%" + today + "%")
-                    .list();
+            allTasks = session.createQuery("from Task", Task.class).list();
             session.getTransaction().commit();
+            for (Task task : allTasks) {
+                if (task.getCreated().toString().startsWith(today)) {
+                    result.add(task);
+                }
+            }
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);

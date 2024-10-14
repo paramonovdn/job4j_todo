@@ -74,23 +74,39 @@ public class TaskController {
             model.addAttribute("message", "Не удалось изменить статус задания на \"Выполнено\"!");
             return "errors/404";
         }
-        var doneTask = taskService.findById(id).get();
-        model.addAttribute("task", doneTask);
+        var doneTask = taskService.findById(id);
+        if (doneTask.isEmpty()) {
+            model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
+            return "errors/404";
+        }
+        model.addAttribute("task", doneTask.get());
         return "tasks/one";
     }
 
     @GetMapping("/update/{id}")
     public String getUpdatePage(Model model, @PathVariable int id) {
-        var task = taskService.findById(id).get();
-        model.addAttribute("task", task);
+        var task = taskService.findById(id);
+        if (task.isEmpty()) {
+            model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
+            return "errors/404";
+        }
+        model.addAttribute("task", task.get());
         return "tasks/update";
     }
 
     @PostMapping("/update")
     public String update(@ModelAttribute Task task, Model model) {
-        taskService.update(task);
-        var updateTask = taskService.findById(task.getId()).get();
-        model.addAttribute("task", updateTask);
+        var isUpdated = taskService.update(task);
+        if (!isUpdated) {
+            model.addAttribute("message", "Не удалось обновить задание!");
+            return "errors/404";
+        }
+        var updatedTask = taskService.findById(task.getId());
+        if (updatedTask.isEmpty()) {
+            model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
+            return "errors/404";
+        }
+        model.addAttribute("task", updatedTask.get());
         return "/tasks/one";
     }
 }
