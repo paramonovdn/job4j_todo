@@ -69,13 +69,7 @@ public class TaskController {
             model.addAttribute("message", "Не удалось изменить статус задания на \"Выполнено\"!");
             return "errors/404";
         }
-        var doneTask = taskService.findById(id);
-        if (doneTask.isEmpty()) {
-            model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
-            return "errors/404";
-        }
-        model.addAttribute("task", doneTask.get());
-        return "tasks/one";
+        return "redirect:/tasks/{id}";
     }
 
     @GetMapping("/update/{id}")
@@ -97,11 +91,7 @@ public class TaskController {
             return "errors/404";
         }
         var updatedTask = taskService.findById(task.getId());
-        if (updatedTask.isEmpty()) {
-            model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
-            return "errors/404";
-        }
         model.addAttribute("task", updatedTask.get());
-        return "/tasks/one";
+        return "tasks/one";
     }
 }

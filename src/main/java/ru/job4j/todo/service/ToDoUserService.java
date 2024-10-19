@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ToDoUserService implements UserService{
+public class ToDoUserService implements UserService {
 
     private final UserStore userStore;
     @Override
