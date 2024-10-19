@@ -1,53 +1,23 @@
 package ru.job4j.todo.service;
 
-import lombok.AllArgsConstructor;
 import ru.job4j.todo.model.Task;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.stereotype.Service;
-import ru.job4j.todo.repository.Store;
 
-@Service
-@AllArgsConstructor
-public class TaskService implements ServiceToDo {
+public interface TaskService {
+    Optional<Task> save(Task task);
 
-    private final Store taskStore;
-    @Override
-    public Optional<Task> save(Task task) {
-        return taskStore.save(task);
-    }
+    boolean deleteById(int id);
 
-    @Override
-    public boolean deleteById(int id) {
-        return taskStore.deleteById(id);
-    }
+    boolean update(Task task);
 
-    @Override
-    public boolean update(Task task) {
-        return taskStore.update(task);
-    }
+    Optional<Task> findById(int id);
 
-    @Override
-    public Optional<Task> findById(int id) {
-        return taskStore.findById(id);
-    }
+    List<Task> findAll();
+    List<Task> findAllDone();
 
-    @Override
-    public List<Task> findAll() {
-        return taskStore.findAll();
-    }
-    public List<Task> findAllDone() {
-        return taskStore.findAllDone();
-    }
+    List<Task> findNewTasks();
 
-    @Override
-    public List<Task> findNewTasks() {
-        return taskStore.findNewTasks();
-    }
-
-    @Override
-    public boolean setDoneTrue(int id) {
-        return taskStore.setDoneTrue(id);
-    }
+    boolean setDoneTrue(int id);
 }
