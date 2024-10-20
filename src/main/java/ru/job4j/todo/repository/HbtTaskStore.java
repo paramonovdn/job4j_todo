@@ -29,8 +29,8 @@ public class HbtTaskStore implements TaskStore {
         try {
             session.beginTransaction();
             session.save(task);
+            result = Optional.of(task);
             session.getTransaction().commit();
-            result = Optional.ofNullable(task);
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);

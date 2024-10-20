@@ -29,7 +29,7 @@ public class HbtUserRepository implements UserStore {
         try {
             session.beginTransaction();
             session.save(user);
-            result = Optional.ofNullable(user);
+            result = Optional.of(user);
             session.getTransaction().commit();
         } catch (Exception e) {
             session.getTransaction().rollback();
