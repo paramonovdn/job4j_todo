@@ -9,6 +9,8 @@ public interface UserStore {
 
     Optional<User> save(User user);
 
+    Optional<User> findById(int id);
+
     boolean deleteById(int id);
 
     Optional<User> findByLoginAndPassword(String login, String password);
