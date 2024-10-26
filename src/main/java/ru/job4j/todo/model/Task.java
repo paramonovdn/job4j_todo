@@ -43,4 +43,10 @@ public class Task {
     @Setter
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "priority_id")
+    @Getter
+    @Setter
+    private Priority priority;
+
 }

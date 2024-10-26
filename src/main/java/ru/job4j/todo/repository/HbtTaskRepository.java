@@ -72,7 +72,7 @@ public class HbtTaskRepository implements TaskStore {
     @Override
     public List<Task> findAll() {
         try {
-            return crudRepository.query("from Task", Task.class);
+            return crudRepository.query("FROM Task t JOIN FETCH t.priority", Task.class);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -81,7 +81,7 @@ public class HbtTaskRepository implements TaskStore {
 
     public List<Task> findAllDone() {
         try {
-            return crudRepository.query("from Task WHERE done = true", Task.class);
+            return crudRepository.query("FROM Task t JOIN FETCH t.priority WHERE t.done = true", Task.class);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -92,7 +92,7 @@ public class HbtTaskRepository implements TaskStore {
     public List<Task> findNewTasks() {
         List<Task> result = new ArrayList<>();
         try {
-            var allTasks = crudRepository.query("from Task", Task.class);
+            var allTasks = crudRepository.query("FROM Task t JOIN FETCH t.priority", Task.class);
             var today = Timestamp.valueOf(LocalDateTime.now()).toString().substring(0, 10);
             for (Task task : allTasks) {
                 if (task.getCreated().toString().startsWith(today)) {

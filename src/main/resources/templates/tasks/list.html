@@ -29,6 +29,7 @@
                     <th scope="col">Автор</th>
                     <th scope="col">Дата создания</th>
                     <th scope="col">Выполнено</th>
+                    <th scope="col">Приоритет</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -44,6 +45,7 @@
                         <i class="bi bi-square"></i>
                     </span>
                     </td>
+                    <td th:text="${task.priority.name}"/>
                 </tr>
                 <tr>
                     <th><a th:href="@{/}">Все</a></th>
