@@ -1,6 +1,7 @@
 package ru.job4j.todo.repository;
 
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.QueryHints;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -72,7 +73,10 @@ public class HbtTaskRepository implements TaskStore {
     @Override
     public List<Task> findAll() {
         try {
-            return crudRepository.query("FROM Task t JOIN FETCH t.priority", Task.class);
+            var tasks = crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority", Task.class);
+            return crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.category WHERE t IN :tTasks", Task.class,
+                                        Map.of("tTasks", tasks)
+            );
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

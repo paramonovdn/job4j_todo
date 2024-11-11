@@ -30,6 +30,7 @@
                     <th scope="col">Дата создания</th>
                     <th scope="col">Выполнено</th>
                     <th scope="col">Приоритет</th>
+                    <th scope="col">Категории</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -46,6 +47,9 @@
                     </span>
                     </td>
                     <td th:text="${task.priority.name}"/>
+                    <td th:each="category: ${task.categories}">
+                        <td th:text="${category.name}"/>
+                    </td>
                 </tr>
                 <tr>
                     <th><a th:href="@{/}">Все</a></th>
