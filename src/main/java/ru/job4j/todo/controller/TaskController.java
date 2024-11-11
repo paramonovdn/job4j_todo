@@ -41,7 +41,6 @@ public class TaskController {
             currentTaskCategories.add(categoryService.findById(id).get());
         }
         task.setCategories(currentTaskCategories);
-        System.out.println("==============================================" + task);
         var user = (User) session.getAttribute("user");
         task.setUser(user);
         taskService.save(task);
