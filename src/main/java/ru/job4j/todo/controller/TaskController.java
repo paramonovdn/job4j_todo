@@ -5,13 +5,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Category;
 import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -21,14 +25,23 @@ public class TaskController {
     private final TaskService taskService;
     private final PriorityService priorityService;
 
+    private final CategoryService categoryService;
+
     @GetMapping("/create")
     public String getCreationPage(Model model) {
         model.addAttribute("priorities", priorityService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "tasks/create";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession session) {
+    public String create(@ModelAttribute Task task, HttpSession session, @RequestParam List<Integer> categoriesId) {
+        ArrayList<Category> currentTaskCategories = new ArrayList<>();
+        for (int id : categoriesId) {
+            currentTaskCategories.add(categoryService.findById(id).get());
+        }
+        task.setCategories(currentTaskCategories);
+        System.out.println("==============================================" + task);
         var user = (User) session.getAttribute("user");
         task.setUser(user);
         taskService.save(task);

@@ -5,6 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -45,5 +47,15 @@ public class Task {
     @Getter
     @Setter
     private Priority priority;
+
+    @Getter
+    @Setter
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "tasks_categories",
+            joinColumns = { @JoinColumn(name = "task_id") },
+            inverseJoinColumns = { @JoinColumn(name = "category_id") }
+    )
+    private List<Category> categories = new ArrayList<>();
 
 }

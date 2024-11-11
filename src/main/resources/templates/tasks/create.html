@@ -36,6 +36,17 @@
                 </select></td>
                 <td>- приоритет</td>
             </tr>
+            <div class="mb-3">
+            <br>
+            <p>Выберите категирии, используя ctrl:</p>
+            <select id="category"  name="categoriesId" class="form-control m-b" multiple="multiple">
+                <option
+                        th:each="category:${categories}"
+                        th:text="${category.name}"
+                        th:value="${category.id}"
+                        th:selected="${category.id == 1}">
+            </select>
+            </div>
             <div class="mb-3 row">
                 <div class="col-6"></div>
                 <div class="col-6">
