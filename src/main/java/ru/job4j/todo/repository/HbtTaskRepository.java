@@ -61,7 +61,7 @@ public class HbtTaskRepository implements TaskStore {
     public Optional<Task> findById(int id) {
         try {
             return crudRepository.optional(
-                    "from Task where id = :fId", Task.class,
+                    "SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority LEFT JOIN FETCH t.categories where t.id = :fId", Task.class,
                     Map.of("fId", id)
             );
         } catch (Exception e) {
@@ -73,10 +73,9 @@ public class HbtTaskRepository implements TaskStore {
     @Override
     public List<Task> findAll() {
         try {
-            var tasks = crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority", Task.class);
-            return crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.category WHERE t IN :tTasks", Task.class,
-                                        Map.of("tTasks", tasks)
-            );
+            var tasks = crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority "
+                    + "LEFT JOIN FETCH t.categories", Task.class);
+            return tasks;
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -85,7 +84,8 @@ public class HbtTaskRepository implements TaskStore {
 
     public List<Task> findAllDone() {
         try {
-            return crudRepository.query("FROM Task t JOIN FETCH t.priority WHERE t.done = true", Task.class);
+            return crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority "
+                    + "LEFT JOIN FETCH t.categories WHERE t.done = true", Task.class);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -96,7 +96,8 @@ public class HbtTaskRepository implements TaskStore {
     public List<Task> findNewTasks() {
         List<Task> result = new ArrayList<>();
         try {
-            var allTasks = crudRepository.query("FROM Task t JOIN FETCH t.priority", Task.class);
+            var allTasks = crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority "
+                    + "LEFT JOIN FETCH t.categories", Task.class);
             var today = Timestamp.valueOf(LocalDateTime.now()).toString().substring(0, 10);
             for (Task task : allTasks) {
                 if (task.getCreated().toString().startsWith(today)) {

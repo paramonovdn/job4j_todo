@@ -47,8 +47,10 @@
                     </span>
                     </td>
                     <td th:text="${task.priority.name}"/>
-                    <td th:each="category: ${task.categories}">
-                        <td th:text="${category.name}"/>
+                    <td>
+                        <ul th:each="category : ${task.categories}">
+                            <li th:text="${category.name}"></li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>

@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Category;
-import ru.job4j.todo.model.Priority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class HbtCategoryRepository implements CategoryStore {
     public Optional<Category> findById(int id) {
         try {
             return crudRepository.optional(
-                    "from Category where id = :fId", Category.class,
+                    "FROM Category WHERE id = :fId", Category.class,
                     Map.of("fId", id)
             );
         } catch (Exception e) {
@@ -37,6 +36,19 @@ public class HbtCategoryRepository implements CategoryStore {
     public List<Category> findAll() {
         try {
             return crudRepository.query("FROM Category", Category.class);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Category> findAllById(List<Integer> categoriesId) {
+        try {
+            return crudRepository.query(
+                    "FROM Category c WHERE c.id IN :cId", Category.class,
+                    Map.of("cId", categoriesId)
+            );
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

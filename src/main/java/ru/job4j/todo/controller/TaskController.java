@@ -1,21 +1,17 @@
 package ru.job4j.todo.controller;
 
-
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.todo.model.Category;
-import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
-
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
+
 
 
 @AllArgsConstructor
@@ -36,10 +32,7 @@ public class TaskController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, HttpSession session, @RequestParam List<Integer> categoriesId) {
-        ArrayList<Category> currentTaskCategories = new ArrayList<>();
-        for (int id : categoriesId) {
-            currentTaskCategories.add(categoryService.findById(id).get());
-        }
+        var currentTaskCategories = categoryService.findAllById(categoriesId);
         task.setCategories(currentTaskCategories);
         var user = (User) session.getAttribute("user");
         task.setUser(user);
@@ -104,7 +97,9 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Task task, Model model) {
+    public String update(@ModelAttribute Task task, Model model, @RequestParam List<Integer> categoriesId) {
+        var categories = categoryService.findAllById(categoriesId);
+        task.setCategories(categories);
         var isUpdated = taskService.update(task);
         if (!isUpdated) {
             model.addAttribute("message", "Не удалось обновить задание!");

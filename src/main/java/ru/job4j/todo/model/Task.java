@@ -48,14 +48,15 @@ public class Task {
     @Setter
     private Priority priority;
 
-    @Getter
-    @Setter
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "tasks_categories",
             joinColumns = { @JoinColumn(name = "task_id") },
             inverseJoinColumns = { @JoinColumn(name = "category_id") }
     )
+    @Getter
+    @Setter
     private List<Category> categories = new ArrayList<>();
 
 }

@@ -9,4 +9,6 @@ public interface CategoryService {
     Optional<Category> findById(int id);
 
     List<Category> findAll();
+
+    List<Category> findAllById(List<Integer> categoriesId);
 }
