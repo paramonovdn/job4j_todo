@@ -9,7 +9,14 @@ import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
 import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.utility.TimeZoneConverter;
+
 import javax.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,16 +48,42 @@ public class TaskController {
     }
 
     @GetMapping("/done")
-    public String getDoneTasks(Model model) {
-        var result = taskService.findAllDone();
+    public String getDoneTasks(Model model, HttpSession session) {
+        ArrayList<Task> doneTasks = new ArrayList<>();
+        var allTasks = taskService.findAll();
+        var user = (User) session.getAttribute("user");
+        for (Task task : allTasks) {
+            if (task.isDone()) {
+                doneTasks.add(task);
+            }
+        }
+        var result = TimeZoneConverter.convert(doneTasks, user);
         model.addAttribute("tasks", result);
         return "tasks/list";
     }
 
     @GetMapping("/new")
-    public String getNewTasks(Model model) {
-        var result = taskService.findNewTasks();
-        model.addAttribute("tasks", result);
+    public String getNewTasks(Model model, HttpSession session) {
+        ArrayList<Task> result = new ArrayList<>();
+        var allTasks = taskService.findAll();
+        var user = (User) session.getAttribute("user");
+
+        /** Поиск крайней точки для обозначения свежей задачи(UTC минус 24 часа*/
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC")));
+        /** Преобразуем в ZonedDateTime*/
+        ZonedDateTime zdt = timestamp.toInstant().atZone(ZoneId.systemDefault());
+        /** Вычитаем 24 часа*/
+        ZonedDateTime newZdt = zdt.minusHours(24);
+        /** Преобразуем обратно в Timestamp. Получаем абсолютное время минус 24 часа*/
+        Timestamp newTimestamp = Timestamp.from(newZdt.toInstant());
+
+        for (Task task : allTasks) {
+            if (task.getCreated().after(newTimestamp)) {
+                result.add(task);
+            }
+        }
+        var tasksWithNewTime = TimeZoneConverter.convert(result, user);
+        model.addAttribute("tasks", tasksWithNewTime);
         return "tasks/list";
     }
 

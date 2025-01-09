@@ -4,7 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class Task {
     private String description;
     @Getter
     @Setter
-    private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
+    private Timestamp created = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC")));
     @Getter
     @Setter
     private boolean done;

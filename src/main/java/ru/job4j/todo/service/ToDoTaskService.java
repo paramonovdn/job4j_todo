@@ -37,14 +37,6 @@ public class ToDoTaskService implements TaskService {
     public List<Task> findAll() {
         return taskStore.findAll();
     }
-    public List<Task> findAllDone() {
-        return taskStore.findAllDone();
-    }
-
-    @Override
-    public List<Task> findNewTasks() {
-        return taskStore.findNewTasks();
-    }
 
     @Override
     public boolean setDoneTrue(int id) {

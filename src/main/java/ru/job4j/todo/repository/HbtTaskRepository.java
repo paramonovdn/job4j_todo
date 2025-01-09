@@ -82,33 +82,6 @@ public class HbtTaskRepository implements TaskStore {
         return new ArrayList<>();
     }
 
-    public List<Task> findAllDone() {
-        try {
-            return crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority "
-                    + "LEFT JOIN FETCH t.categories WHERE t.done = true", Task.class);
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return new ArrayList<>();
-    }
-
-    @Override
-    public List<Task> findNewTasks() {
-        List<Task> result = new ArrayList<>();
-        try {
-            var allTasks = crudRepository.query("SELECT DISTINCT t FROM Task t LEFT JOIN FETCH t.priority "
-                    + "LEFT JOIN FETCH t.categories", Task.class);
-            var today = Timestamp.valueOf(LocalDateTime.now()).toString().substring(0, 10);
-            for (Task task : allTasks) {
-                if (task.getCreated().toString().startsWith(today)) {
-                    result.add(task);
-                }
-            }
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return result;
-    }
     @Override
     public boolean setDoneTrue(int id) {
         var task = findById(id).get();

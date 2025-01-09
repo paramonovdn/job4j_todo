@@ -16,8 +16,5 @@ public interface TaskStore {
 
     List<Task> findAll();
 
-    List<Task> findAllDone();
-
-    List<Task> findNewTasks();
     boolean setDoneTrue(int id);
 }
