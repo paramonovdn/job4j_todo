@@ -31,7 +31,7 @@
                 </tr>
                 <tr>
                     <td><a th:text="${task.title}"></a></td>
-                    <td th:text="${task.created}"/>
+                    <td th:text="${#temporals.format(task.created.toLocalDateTime(), 'HH:mm dd-MM-yyyy')}"/>
                     <td>
                     <span th:if="${task.done}">
                         <i class="bi bi-check-square"></i>

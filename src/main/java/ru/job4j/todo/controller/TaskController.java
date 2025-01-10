@@ -75,7 +75,7 @@ public class TaskController {
         /** Вычитаем 24 часа*/
         ZonedDateTime newZdt = zdt.minusHours(24);
         /** Преобразуем обратно в Timestamp. Получаем абсолютное время минус 24 часа*/
-        Timestamp newTimestamp = Timestamp.from(newZdt.toInstant());
+        Timestamp newTimestamp = Timestamp.valueOf(newZdt.toLocalDateTime());
 
         for (Task task : allTasks) {
             if (task.getCreated().after(newTimestamp)) {
@@ -88,13 +88,15 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public String getById(Model model, @PathVariable int id) {
+    public String getById(Model model, @PathVariable int id, HttpSession session) {
         var taskOptional = taskService.findById(id);
         if (taskOptional.isEmpty()) {
             model.addAttribute("message", "Задание с указанным идентификатором не найдено!");
             return "errors/404";
         }
-        model.addAttribute("task", taskOptional.get());
+        var user = (User) session.getAttribute("user");
+        var task = TimeZoneConverter.convert(taskOptional.get(), user);
+        model.addAttribute("task", task);
         return "tasks/one";
     }
 
